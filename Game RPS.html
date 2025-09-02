@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rock Paper Scissors</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 5px #000;
+        }
+
+        input[type="text"], input[type="number"] {
+            padding: 10px;
+            font-size: 1.2em;
+            border-radius: 5px;
+            border: none;
+            width: 80px;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 1.2em;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            background-color: #ff9800;
+            color: #000;
+            margin: 5px;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background-color: #ffc107;
+        }
+
+        #gameSection {
+            margin-top: 20px;
+        }
+
+        #score, #message, #finalResult {
+            margin: 10px 0;
+            font-size: 1.2em;
+        }
+
+        #finalResult {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #00ff00;
+            text-shadow: 1px 1px 5px #000;
+        }
+    </style>
+</head>
+<body>
+    <h1>Rock Paper Scissors Game</h1>
+
+    <p>Enter number of rounds:</p>
+    <input id="roundsInput" type="number" min="1">
+    <button onclick="startGame()">Start Game</button>
+
+    <div id="gameSection" style="display:none;">
+        <p>Choose [R / P / S]</p>
+        <input id="userInput" type="text" maxlength="1">
+        <button onclick="playRound()">Play</button>
+
+        <h2>Score</h2>
+        <p id="score">Win: 0 | Lose: 0 | Tie: 0</p>
+        <h3 id="message"></h3>
+        <h3 id="finalResult"></h3>
+    </div>
+
+    <script>
+        const data = ['R','P','S'];
+        let countUser = 0;
+        let countGm = 0;
+        let countTie = 0;
+        let totalRounds = 0;
+        let currentRound = 0;
+
+        function startGame() {
+            const roundsInput = document.getElementById('roundsInput').value;
+            totalRounds = parseInt(roundsInput);
+            if (isNaN(totalRounds) || totalRounds < 1) {
+                alert("Please enter a valid number of rounds.");
+                return;
+            }
+            currentRound = 0;
+            countUser = 0;
+            countGm = 0;
+            countTie = 0;
+            document.getElementById('gameSection').style.display = 'block';
+            document.getElementById('score').innerText = `Win: 0 | Lose: 0 | Tie: 0`;
+            document.getElementById('finalResult').innerText = '';
+            document.getElementById('message').innerText = `Round 1 of ${totalRounds}`;
+        }
+
+        function playRound() {
+            if (currentRound >= totalRounds) return;
+
+            const user = document.getElementById('userInput').value.toUpperCase();
+            if(!['R','P','S'].includes(user)){
+                alert("Please enter R, P, or S");
+                return;
+            }
+            const Gm = data[Math.floor(Math.random() * 3)];
+            let resultMsg = `User --> (${user}) vs (${Gm}) <-- Computer\n`;
+
+            if ((user==='S' && Gm==='P') || (user==='P' && Gm==='R') || (user==='R' && Gm==='S')){
+                resultMsg += "[ You won! ]";
+                countUser++;
+            } else if ((user==='P' && Gm==='S') || (user==='R' && Gm==='P') || (user==='S' && Gm==='R')){
+                resultMsg += "[ You lose! ]";
+                countGm++;
+            } else {
+                resultMsg += "[ Tie ]";
+                countTie++;
+            }
+
+            currentRound++;
+            document.getElementById('message').innerText = resultMsg;
+            document.getElementById('score').innerText = `Win: ${countUser} | Lose: ${countGm} | Tie: ${countTie}`;
+
+            if (currentRound === totalRounds) {
+                let finalMsg = "----- Final Result -----\n";
+                if (countUser > countGm && countUser > countTie) {
+                    finalMsg += "Result is WIN!";
+                } else if (countGm > countUser && countGm > countTie) {
+                    finalMsg += "Result is LOSE!";
+                } else {
+                    finalMsg += "Result is TIE!";
+                }
+                document.getElementById('finalResult').innerText = finalMsg;
+            } else {
+                document.getElementById('message').innerText += `\nRound ${currentRound + 1} of ${totalRounds}`;
+            }
+
+            document.getElementById('userInput').value = '';
+            document.getElementById('userInput').focus();
+        }
+    </script>
+</body>
+</html>
